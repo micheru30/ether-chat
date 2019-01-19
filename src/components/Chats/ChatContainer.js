@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import SideBar from './SideBar'
 import {COMMUNITY_CHAT,MESSAGE_SENT,MESSAGE_RECIEVED,TYPING} from '../../Events'
+import ChatHeading from './ChatHeading'
+import Messages from '../Messages/Messages'
+import MessageInput from '../Messages/MessageInput'
 
 export default class ChatContainer extends Component {
     constructor(props){
@@ -18,17 +21,18 @@ export default class ChatContainer extends Component {
         return this.addChat(chat,true)
     }
     addChat = (chat, reset) =>{
+        console.log(chat)
         const {socket} = this.props
         const {chats} = this.state
 
         const newChats = reset ? [chat] : [...chats]
         this.setState({chats: newChats})
 
-        const messageEvent = `${MESSAGE_RECIEVED}-${chat-id}`
-        const typingEvent = `${TYPING}-${chat-id}`
+        const messageEvent = `${MESSAGE_RECIEVED}-${chat.id}`
+        const typingEvent = `${TYPING}-${chat.id}`
 
         socket.on(typingEvent)
-        socket.on(messageEvent, this.addMessageToChat(chatId))
+        socket.on(messageEvent, this.addMessageToChat(chat.id))
     }
     addMessageToChat = (chatId) =>{
         return message =>{
@@ -41,10 +45,30 @@ export default class ChatContainer extends Component {
             this.setState({chats:newChats})
         }
     }
-    sage = (chatId, message)=>{
-        const {socket} = this.props
-        socket.emit(MESSAGE_SENT, {chatId,message})
+    updateTypingInChat = (chatId) =>{
+		return ({isTyping, user})=>{
+			if(user !== this.props.user.name){
+
+				const { chats } = this.state
+
+				let newChats = chats.map((chat)=>{
+					if(chat.id === chatId){
+						if(isTyping && !chat.typingUsers.includes(user)){
+							chat.typingUsers.push(user)
+						}else if(!isTyping && chat.typingUsers.includes(user)){
+							chat.typingUsers = chat.typingUsers.filter(u => u !== user)
+						}
+					}
+					return chat
+				})
+				this.setState({chats:newChats})
+			}
+		}
     }
+    sendMessage = (chatId, message)=>{
+		const { socket } = this.props
+		socket.emit(MESSAGE_SENT, {chatId, message} )
+	}
     sendTyping = (chatId, isTyping)=>{
         const {socket} = this.props
         socket.emit(TYPING, {chatId, isTyping})

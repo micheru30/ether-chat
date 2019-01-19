@@ -14,8 +14,8 @@ export default class LoginForm extends Component {
         if(isUser){
             this.setError("Ether Name Taken")
         } else {
-            this.props.setUser(user)
             this.setError("")
+            this.props.setUser(user)
         }
     }
     handleSubmit = (e) => {

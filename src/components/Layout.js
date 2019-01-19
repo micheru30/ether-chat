@@ -38,7 +38,6 @@ class Layout extends Component {
         this.setState({ user: null })
     }
     render() {
-        const { title } = this.props
         const { socket, user } = this.state
         return (
             <div className='container'>

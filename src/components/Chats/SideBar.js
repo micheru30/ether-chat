@@ -27,7 +27,7 @@ export default class SideBar extends Component{
 						onClick={(e)=>{ (e.target === this.refs.user) && setActiveChat(null) }}>
 						
 						{
-						chats.map((chat)=>{
+						chats.map((chat, i)=>{
 							if(chat.name){
 								const lastMessage = chat.messages[chat.messages.length - 1];
 								const user = chat.users.find(({name})=>{
@@ -37,7 +37,7 @@ export default class SideBar extends Component{
 								
 								return(
 								<div 
-									key={chat.id} 
+									key={i} 
 									className={`user ${classNames}`}
 									onClick={ ()=>{ setActiveChat(chat) } }
 									>
