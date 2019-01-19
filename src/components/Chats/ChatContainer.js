@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import SideBar from './SideBar' 
+import SideBar from './SideBar'
+import {COMMUNITY_CHAT,MESSAGE_SENT,MESSAGE_RECIEVED,TYPING} from '../../Events'
 
 export default class ChatContainer extends Component {
     constructor(props){
@@ -27,9 +28,20 @@ export default class ChatContainer extends Component {
         const typingEvent = `${TYPING}-${chat-id}`
 
         socket.on(typingEvent)
-        socket.on(messageEvent)
+        socket.on(messageEvent, this.addMessageToChat(chatId))
     }
-    sendMessage = (chatId, message)=>{
+    addMessageToChat = (chatId) =>{
+        return message =>{
+            const {chats} = this.state
+            let newChats = chats.map((chat)=>{
+                if(chat.id === chatId)
+                    chat.messages.push(message)
+                    return chat
+            })
+            this.setState({chats:newChats})
+        }
+    }
+    sage = (chatId, message)=>{
         const {socket} = this.props
         socket.emit(MESSAGE_SENT, {chatId,message})
     }
