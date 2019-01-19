@@ -31,7 +31,7 @@ export default class ChatContainer extends Component {
         const messageEvent = `${MESSAGE_RECIEVED}-${chat.id}`
         const typingEvent = `${TYPING}-${chat.id}`
 
-        socket.on(typingEvent)
+        socket.on(typingEvent, this.updateTypingInChat(chat.id))
         socket.on(messageEvent, this.addMessageToChat(chat.id))
     }
     addMessageToChat = (chatId) =>{
